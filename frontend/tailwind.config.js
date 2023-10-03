@@ -15,12 +15,17 @@ module.exports = {
       colors: {
         'light-cream': '#E8DDD9',
         'light-brown': '#BDA193',
+        'leaf-green': '#9BB068',
+        'mindful-gray-10': '#F7F4F2',
         'mindful-gray-80': '#4B3425',
         'mindful-gray-40': '#BDA193',
         'mindful-gray-100': '#1F160F',
         'empathy-orange-10': '#FFF0EB',
         'empathy-orange-40': '#FE814B',
-      }
+      },
+      borderRadius: {
+        'custom': '45px',
+      },
     },
   },
   plugins: [],

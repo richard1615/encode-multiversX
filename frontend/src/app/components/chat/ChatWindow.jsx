@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import Input from './Input'
-import MessageWindow from './MessageWindow'
+import MessageWindow from './messages/MessageWindow'
 
 function ChatWindow() {
   return (
