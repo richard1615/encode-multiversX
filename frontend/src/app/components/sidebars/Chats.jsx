@@ -36,7 +36,7 @@ function Chats() {
 
   return (
     <div className="w-[20%] min-w-[100px] bg-light-cream text-white h-screen flex flex-col">
-      <div className="flex items-center justify-between px-4 py-10">
+      <div className="flex items-center justify-between px-4 py-8">
         <h1 className="text-3xl text-mindful-gray-80 font-semibold">Chats</h1>
         <Image src="/icons/search.svg" alt="Plus icon" width={24} height={24} className='cursor-pointer w-8 h-8' />
       </div>
