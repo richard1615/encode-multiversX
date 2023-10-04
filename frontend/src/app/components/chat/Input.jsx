@@ -29,7 +29,7 @@ function Input() {
                     className="flex-grow m-10 outline-none border-none rounded-custom min-h-28 bg-mindful-gray-10 text-lg font-semibold text-slate-600 placeholder-slate-600 resize-none overflow-y-scroll max-h-60"
                     rows={1}
                 />
-                <button type="submit" className="flex absolute bottom-1 right-6 justify-center items-center bg-leaf-green text-white rounded-full focus:outline-none w-16 h-16 m-6">
+                <button type="submit" className="flex absolute bottom-1 right-6 justify-center items-center bg-leaf-green text-white rounded-full focus:outline-none w-16 h-16 m-6 hover:bg-[#97a754]">
                     <Image src='/icons/send.svg' alt='Send' width={35} height={35} />
                 </button>
             </div>
