@@ -5,7 +5,7 @@ import MessageWindow from './messages/MessageWindow'
 
 function ChatWindow() {
   return (
-    <div className='flex flex-col w-[60%] min-w-[300px]'>
+    <div className='flex flex-col w-[60%] min-w-[300px] max-h-screen'>
       <Header />
       <MessageWindow />
       <Input />
