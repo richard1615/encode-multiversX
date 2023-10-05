@@ -5,7 +5,7 @@ import ChatWindow from './components/chat/ChatWindow'
 export default function Home() {
   return (
     <div className="flex flex-row">
-      <Chats /> 
+      {/* <Chats />  */}
       <Topics />
       <ChatWindow />
     </div>

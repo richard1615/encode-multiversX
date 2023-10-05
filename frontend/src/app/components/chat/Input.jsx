@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 function Input() {
     const [inputValue, setInputValue] = useState('');
@@ -17,7 +18,14 @@ function Input() {
         event.preventDefault();
         console.log(inputValue);
         setInputValue('');
-    };
+
+        const supabase = createClientComponentClient();
+        supabase.from('chats').insert([
+            { text: inputValue },
+        ]).then((res) => {
+            console.log(res)
+        })
+    }
 
     return (
         <form onSubmit={handleSubmit}>

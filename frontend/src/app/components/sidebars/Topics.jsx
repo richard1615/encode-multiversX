@@ -70,7 +70,7 @@ function Topics() {
   const [selectedItem, setSelectedItem] = useState(null);
 
   return (
-    <div className="w-[20%] min-w-[100px] bg-[#F7F4F2] flex flex-col h-screen justify-between">
+    <div className="w-[30%] min-w-[150px] bg-[#F7F4F2] flex flex-col h-screen justify-between">
       <div className="h-[90%]">
         <div className="flex flex-row items-center px-4 py-8 gap-4">
           <Image src="/icons/chat-double.svg" alt="Chat Double icon" width={32} height={32} />
