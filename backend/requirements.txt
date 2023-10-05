@@ -6,4 +6,8 @@ deeplake
 substrate-interface
 python-dotenv
 openai
-firebase-admin
+ipykernel
+multiversx-sdk-core==0.5.*
+multiversx-sdk-wallet==0.7.*
+multiversx-sdk-network-providers==0.11.*
+supabase
