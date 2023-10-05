@@ -1,0 +1,16 @@
+pytest
+boto3
+requests
+Flask
+Flask-SocketIO
+langchain
+pytz
+deeplake
+substrate-interface
+python-dotenv
+openai
+ipykernel
+multiversx-sdk-core==0.5.*
+multiversx-sdk-wallet==0.7.*
+multiversx-sdk-network-providers==0.11.*
+supabase
