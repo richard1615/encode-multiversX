@@ -10,6 +10,7 @@ export default function Home() {
   const supabase = createClientComponentClient()
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [selectedChatId, setSelectedChatId] = useState(null)
 
   useEffect(() => {
     async function fetchUser() {
@@ -30,8 +31,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-row">
-      <Topics user={user} />
-      <ChatWindow />
+      <Topics user={user} selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} />
+      <ChatWindow selectedChatId={selectedChatId} />
     </div>
   )
 }

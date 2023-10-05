@@ -17,9 +17,10 @@ const buttonClass = (isSelected) =>
   `flex flex-row gap-1 items-center ${isSelected ? "hover:bg-[#c6d6af]" : "hover:bg-[#E5EAD7]"} rounded-3xl py-1 px-2`;
 const buttonTextClass = (isSelected) => `${isSelected ? "text-[#3D4A26]" : "text-[#1F160F7A]"} text-sm font-semibold`;
 
-function TopicItem({ id, name, avatar, supabase, selectedItem, setSelectedItem, conversations, setConversations }) {
-  const isSelected = id === selectedItem;
+function TopicItem({ id, name, avatar, selectedChatId, setSelectedChatId, conversations, setConversations }) {
+  const isSelected = id === selectedChatId;
   const [isDeleting, setIsDeleting] = useState(false);
+  const supabase = createClientComponentClient();
 
   const handleShareClick = () => {
     console.log("Share button clicked");
@@ -34,7 +35,7 @@ function TopicItem({ id, name, avatar, supabase, selectedItem, setSelectedItem, 
         .eq('id', id);
 
         if (isSelected) {
-          setSelectedItem(null);
+          setSelectedChatId(null);
         }
 
         setConversations(conversations.filter((conversation) => conversation.id !== id));
@@ -48,7 +49,7 @@ function TopicItem({ id, name, avatar, supabase, selectedItem, setSelectedItem, 
     <div className={topicItemClass(isSelected, isDeleting)}>
       <Image src={avatar} alt="Plus icon" width={64} height={64} />
       <div className="flex flex-col gap-0.5" style={{ width: "calc(100% - 80px)" }}>
-        <button className={`text-[#3D4A26] text-lg font-bold overflow-hidden whitespace-nowrap text-ellipsis text-left pl-2`} onClick={() => setSelectedItem(id)}>{name}</button>
+        <button className={`text-[#3D4A26] text-lg font-bold overflow-hidden whitespace-nowrap text-ellipsis text-left pl-2`} onClick={() => setSelectedChatId(id)}>{name}</button>
         <div className="flex flex-row items-center">
           <button className={buttonClass(isSelected)} onClick={handleShareClick}>
             <Image src={isSelected ? "/icons/share-selected.svg" : "/icons/share.svg"} alt="Share icon" width={20} height={20} />
@@ -64,8 +65,7 @@ function TopicItem({ id, name, avatar, supabase, selectedItem, setSelectedItem, 
   );
 }
 
-function Topics({ user }) {
-  const [selectedItem, setSelectedItem] = useState(null);
+function Topics({ user, selectedChatId, setSelectedChatId }) {
   const [conversations, setConversations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClientComponentClient();
@@ -110,7 +110,7 @@ function Topics({ user }) {
       };
 
       setConversations([newConversation, ...conversations]);
-      setSelectedItem(newConversation.id);
+      setSelectedChatId(newConversation.id);
     } catch (error) {
       console.log(error);
     }
@@ -135,9 +135,8 @@ function Topics({ user }) {
               id={id}
               name={name}
               avatar={avatar}
-              supabase={supabase}
-              selectedItem={selectedItem}
-              setSelectedItem={setSelectedItem}
+              selectedChatId={selectedChatId}
+              setSelectedChatId={setSelectedChatId}
               conversations={conversations}
               setConversations={setConversations}
             />
