@@ -6,6 +6,16 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 function Input() {
     const [inputValue, setInputValue] = useState('');
+    let user = None;
+
+    supabase.auth.getUser()
+        .then(data => {
+            user = data.user;
+        })
+        .catch(error => {
+            console.error('Error fetching user:', error);
+        });
+
 
     const handleInputChange = (event) => {
         const target = event.target;
@@ -20,8 +30,8 @@ function Input() {
         setInputValue('');
 
         const supabase = createClientComponentClient();
-        supabase.from('chats').insert([
-            { text: inputValue },
+        supabase.from('messages').insert([
+            { text: inputValue, user_id: user.id },
         ]).then((res) => {
             console.log(res)
         })
