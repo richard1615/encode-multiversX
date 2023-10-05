@@ -26,11 +26,6 @@ export default function Login() {
     router.push('/')
   }
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.refresh()
-  }
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-4 space-y-4 bg-white rounded-md shadow-lg">
@@ -58,11 +53,6 @@ export default function Login() {
           className="w-full px-4 py-2 text-white bg-green-500 rounded-md hover:bg-blue-600"
           onClick={handleSignIn}>
           Sign in
-        </button>
-        <button 
-          className="w-full px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600"
-          onClick={handleSignOut}>
-          Sign out
         </button>
       </div>
     </div>
