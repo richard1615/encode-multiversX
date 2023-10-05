@@ -22,7 +22,7 @@ const ChatTopics = [
 ];
 
 const topicItemClass = (isSelected) =>
-  `flex flex-row items-center gap-2 p-4 w-full ${isSelected ? "bg-[#E5EAD7] border-r-4 border-solid border-[#9BB068]" : ""}`;
+  `flex flex-row items-center gap-2 p-4 w-full ${isSelected && "bg-[#E5EAD7] border-r-4 border-solid border-[#9BB068]"}`;
 const buttonClass = (isSelected) =>
   `flex flex-row gap-1 items-center ${isSelected ? "hover:bg-[#c6d6af]" : "hover:bg-[#E5EAD7]"} rounded-3xl py-1 px-2`;
 const buttonTextClass = (isSelected) => `${isSelected ? "text-[#3D4A26]" : "text-[#1F160F7A]"} text-sm font-semibold`;
@@ -32,10 +32,6 @@ function TopicItem({ id, name, icon, selectedItem, setSelectedItem }) {
 
   const handleShareClick = () => {
     console.log("Share button clicked");
-  };
-
-  const handleAddClick = () => {
-    console.log("Add button clicked");
   };
 
   const handleDeleteClick = () => {
@@ -52,10 +48,6 @@ function TopicItem({ id, name, icon, selectedItem, setSelectedItem }) {
             <Image src={isSelected ? "/icons/share-selected.svg" : "/icons/share.svg"} alt="Share icon" width={20} height={20} />
             <div className={buttonTextClass(isSelected)}>Share</div>
           </button>
-          <button className={buttonClass(isSelected)} onClick={handleAddClick}>
-            <Image src={isSelected ? "/icons/layer-add-selected.svg" : "/icons/layer-add.svg"} alt="Add icon" width={20} height={20} />
-            <div className={buttonTextClass(isSelected)}>Add</div>
-          </button>
           <button className={buttonClass(isSelected)} onClick={handleDeleteClick}>
             <Image src={isSelected ? "/icons/delete-selected.svg" : "/icons/delete.svg"} alt="Delete icon" width={20} height={20} />
             <div className={buttonTextClass(isSelected)}>Delete</div>
@@ -70,7 +62,7 @@ function Topics() {
   const [selectedItem, setSelectedItem] = useState(null);
 
   return (
-    <div className="w-[30%] min-w-[150px] bg-[#F7F4F2] flex flex-col h-screen justify-between">
+    <div className="w-[25%] min-w-[125px] bg-[#F7F4F2] flex flex-col h-screen justify-between">
       <div className="h-[90%]">
         <div className="flex flex-row items-center px-4 py-8 gap-4">
           <Image src="/icons/chat-double.svg" alt="Chat Double icon" width={32} height={32} />
