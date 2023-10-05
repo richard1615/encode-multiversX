@@ -15,6 +15,7 @@ export default function Login() {
       email,
       password,
     })
+    router.push('/')
   }
 
   const handleSignIn = async () => {
@@ -22,7 +23,7 @@ export default function Login() {
       email,
       password,
     })
-    // router.refresh()
+    router.push('/')
   }
 
   const handleSignOut = async () => {
