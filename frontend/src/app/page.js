@@ -1,6 +1,6 @@
 'use client'
 
-import Chats from '@/app/components/sidebars/Chats'
+import { useEffect, useState } from 'react'
 import Topics from '@/app/components/sidebars/Topics'
 import ChatWindow from './components/chat/ChatWindow'
 import { useRouter } from 'next/navigation'
@@ -9,22 +9,28 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 export default function Home() {
   const supabase = createClientComponentClient()
   const router = useRouter()
+  const [user, setUser] = useState(null)
 
-
-  supabase.auth.getSession()
-  .then(({ data }) => {
-    const session = data.session;
-    console.log(session)
-    if (session === null) {
-      // this is a protected route - only users who are signed in can view this route
-      router.push('/login')
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const { data, error } = await supabase.auth.getSession()
+        if (!data.session) {
+          router.push('/login')
+        } else {
+          const { data, error } = await supabase.auth.getUser()
+          setUser(data.user)
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
-  })
+    fetchUser()
+  }, [])
 
   return (
     <div className="flex flex-row">
-      {/* <Chats />  */}
-      <Topics />
+      <Topics user={user} />
       <ChatWindow />
     </div>
   )

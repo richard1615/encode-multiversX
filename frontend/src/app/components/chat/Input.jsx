@@ -9,14 +9,6 @@ function Input() {
 	let user = null;
 	const supabase = createClientComponentClient();
 
-	supabase.auth.getUser()
-		.then(data => {
-			user = data.user;
-		})
-		.catch(error => {
-			console.error('Error fetching user:', error);
-		});
-
 
 	const handleInputChange = (event) => {
 		const target = event.target;
