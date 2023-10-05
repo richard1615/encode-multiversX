@@ -6,7 +6,8 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 function Input() {
     const [inputValue, setInputValue] = useState('');
-    let user = None;
+    let user = null;
+    const supabase = createClientComponentClient();
 
     supabase.auth.getUser()
         .then(data => {
