@@ -42,13 +42,21 @@ const MessageWindow = ({ selectedChatId }) => {
 
   return (
     <div className='flex flex-col flex-grow p-10 overflow-y-scroll'>
-      {messages?.map((message, index) => {
-        if (message.is_bot) {
-          return <BotMessage key={index} message={message.text} />
-        } else {
-          return <UserMessage key={index} message={message.text} />
-        }
-      })}
+      {
+        messages === null ? (
+          <div className="text-center text-gray-500 italic">
+            👋 Hey there! How can I assist you today? Just start typing or ask any question to begin our chat.
+          </div>
+        ) : (
+          messages?.map((message, index) => {
+            if (message.is_bot) {
+              return <BotMessage key={index} message={message.text} />
+            } else {
+              return <UserMessage key={index} message={message.text} />
+            }
+          })
+        )
+      }
     </div>
   )
 }
