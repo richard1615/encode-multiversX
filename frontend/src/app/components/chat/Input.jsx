@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-function Input() {
+function Input({ selectedChatId }) {
 	const [inputValue, setInputValue] = useState('');
-	let user = null;
 	const supabase = createClientComponentClient();
 
 
@@ -21,10 +20,8 @@ function Input() {
 		event.preventDefault();
 		console.log(inputValue);
 		setInputValue('');
-
-		const supabase = createClientComponentClient();
 		supabase.from('messages').insert([
-			{ text: inputValue, user_id: user.id },
+			{ text: inputValue, conversation_id: selectedChatId, is_bot: false },
 		]).then((res) => {
 			console.log(res)
 		})
