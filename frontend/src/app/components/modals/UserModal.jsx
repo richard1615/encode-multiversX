@@ -14,8 +14,8 @@ export default function BasicPopover() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [editingAPIKey, setEditingAPIKey] = useState(false);
   const [editingWallet, setEditingWallet] = useState(false);
-  const [openAPIKey, setOpenAPIKey] = useState(''); // Initially empty or set to some default value
-  const [walletAddress, setWalletAddress] = useState(''); // Initially empty or set to some default value
+  const [openAPIKey, setOpenAPIKey] = useState(localStorage.getItem('openAIKey') || '');
+  const [walletAddress, setWalletAddress] = useState(localStorage.getItem('walletAddress') || '');
   const [tempAPIKey, setTempAPIKey] = useState(openAPIKey);
   const [tempWalletAddress, setTempWalletAddress] = useState(walletAddress);
 
@@ -43,6 +43,7 @@ export default function BasicPopover() {
 
   const saveAPIKey = () => {
     setOpenAPIKey(tempAPIKey);
+    localStorage.setItem('openAIKey', tempAPIKey);
     setEditingAPIKey(false);
   };
 
@@ -53,6 +54,7 @@ export default function BasicPopover() {
 
   const saveWalletAddress = () => {
     setWalletAddress(tempWalletAddress);
+    localStorage.setItem('walletAddress', tempWalletAddress);
     setEditingWallet(false);
   };
 
