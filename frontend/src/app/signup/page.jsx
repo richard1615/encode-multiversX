@@ -4,16 +4,23 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-export default function Login() {
+export default function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState(null)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
-  const handleSignIn = async (e) => {
-    e.preventDefault()
-    const { error } = await supabase.auth.signInWithPassword({
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     })
@@ -38,18 +45,21 @@ export default function Login() {
         <div class="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
       </div>
       <div className="flex md:w-1/2 justify-center py-10 items-center bg-white">
-        <form className="bg-white" onSubmit={handleSignIn}>
-          <h1 className="text-gray-800 font-bold text-2xl mb-1">Hello Again!</h1>
-          <p className="text-sm font-normal text-gray-600 mb-7">Welcome Back</p>
+        <form className="bg-white" onSubmit={handleSignUp}>
+          <h1 className="text-gray-800 font-bold text-2xl mb-1">Welcome!</h1>
+          <p className="text-sm font-normal text-gray-600 mb-7">Create your account</p>
           <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
             <input className="pl-2 outline-none border-none" type="text" name="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
-          <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
             <input className="pl-2 outline-none border-none" type="password" name="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
+          <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
+            <input className="pl-2 outline-none border-none" type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          </div>
           {error && <p className="text-red-500 mt-2">{error}</p>}
-          <button type="submit" className="block w-full bg-mindful-gray-40 hover:bg-leaf-green mt-4 py-2 rounded-2xl text-white font-semibold mb-2">Login</button>
-          New here?<span className="text-sm ml-2 hover:text-blue-500 cursor-pointer" onClick={() => router.push('/signup')}>Create an account</span>
+          <button type="submit" className="block w-full bg-mindful-gray-40 hover:bg-leaf-green mt-4 py-2 rounded-2xl text-white font-semibold mb-2">Sign Up</button>
+          Already have an account?<span className="text-sm ml-2 hover:text-blue-500 cursor-pointer" onClick={() => router.push('/login')}>Login</span>
         </form>
       </div>
     </div>
