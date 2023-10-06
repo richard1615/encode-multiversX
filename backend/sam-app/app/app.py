@@ -8,9 +8,11 @@ from langchain.chat_models import ChatOpenAI
 from tools.custom_multix_tools import (GetAccountBalanceTool)
 from dotenv import load_dotenv
 from supabase import create_client, Client
+from flask_cors import CORS
 
 load_dotenv()
 app = Flask(__name__)
+CORS(app)
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
@@ -42,7 +44,20 @@ def generate_output():
     if data['chat_id'] is None or data['chat_id'] == "":
         print("no chat id")
         return jsonify(message="No Chat ID")
+    try:
+        data['chat_id'] = int(data['chat_id'])
+    except:
+        print('chat_id must be a number')
+        return jsonify(message="chat_id must be a number")
     
+    # conversation_exists = supabase.table('conversations') \
+    #     .select('id') \
+    #     .eq('id', data['chat_id']) \
+    #     .execute()
+    # if not conversation_exists:
+    #     print("Wrong conversation ID")
+    #     return jsonify(message="Wrong conversation ID")    
+
     os.environ["OPENAI_API_KEY"] = data['openAIKey']
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
     tools = [
@@ -56,15 +71,17 @@ def generate_output():
     output = agent.run(data['text'])
 
     # store in supabase
-    result = supabase.table('chatbot_messages') \
-    .insert({
-        "user_id": data['user_id'],
-        "chat_id": data['chat_id'],
-        "text": output,
-        "is_bot": True
-    }) \
-    .execute()
-
+    try:
+        result = supabase.table('messages') \
+            .insert({
+                "text": output,
+                "is_bot": True,
+                "conversation_id": data['chat_id'],
+            }) \
+            .execute()
+    except Exception as e:
+        print(e, "chat id must be valid")
+        return jsonify(message="chat_id must be valid")
     return jsonify(message="Success")
 
 if __name__ == '__main__':

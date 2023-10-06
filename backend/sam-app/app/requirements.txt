@@ -10,3 +10,4 @@ supabase
 aws-lambda-wsgi
 requests
 aws-wsgi 
+flask_cors
