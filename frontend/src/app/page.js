@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <div className="flex flex-row">
       <Topics user={user} selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} />
-      <ChatWindow selectedChatId={selectedChatId} />
+      <ChatWindow user={user} selectedChatId={selectedChatId} />
     </div>
   )
 }
