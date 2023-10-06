@@ -1,0 +1,13 @@
+Flask
+langchain
+python-dotenv
+openai
+ipykernel
+multiversx-sdk-core==0.5.*
+multiversx-sdk-wallet==0.7.*
+multiversx-sdk-network-providers==0.11.*
+supabase
+aws-lambda-wsgi
+requests
+aws-wsgi 
+flask_cors
