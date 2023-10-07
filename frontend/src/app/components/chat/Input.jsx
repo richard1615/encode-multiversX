@@ -5,12 +5,21 @@ import Image from 'next/image';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useChatStore } from '@/store/store';
 
+const ChatAvatars = [
+	"/icons/avatar-0.svg",
+	"/icons/avatar-1.svg",
+	"/icons/avatar-2.svg"
+];
+
 function Input() {
 	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 	const [inputValue, setInputValue] = useState('');
 	const supabase = createClientComponentClient();
 	const selectedChatId = useChatStore((state) => state.selectedChatId);
 	const user = useChatStore((state) => state.user);
+	const conversations = useChatStore((state) => state.conversations);
+	const setConversations = useChatStore((state) => state.setConversations);
+	const setSelectedChatId = useChatStore((state) => state.setSelectedChatId);
 
 
 	const handleInputChange = (event) => {
@@ -20,12 +29,45 @@ function Input() {
 		target.style.height = (target.scrollHeight) + 'px';
 	};
 
+	const handleAddNewConversation = async () => {
+		try {
+			const { data, error } = await supabase
+				.from('conversations')
+				.insert([
+					{ name: `New Conversation ${conversations.length + 1}`, user_id: user.id },
+				])
+				.select();
+
+			const newConversation = {
+				...data[0],
+				avatar: ChatAvatars[Math.floor(Math.random() * ChatAvatars.length)],
+			};
+
+			setConversations([newConversation, ...conversations]);
+			setSelectedChatId(newConversation.id);
+			return newConversation.id;
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		let chatIdToSend;
+		if (!selectedChatId) {
+			try {
+				chatIdToSend = await handleAddNewConversation();
+			} catch (err) {
+				console.error("Error creating new conversation:", err.message);
+				return; // Exit early if we couldn't create a new chat
+			}
+		} else {
+			chatIdToSend = selectedChatId;
+		}
 		try {
 			// Send to DB
 			const { data, error } = await supabase.from('messages').insert([
-				{ text: inputValue, conversation_id: selectedChatId, is_bot: false },
+				{ text: inputValue, conversation_id: chatIdToSend, is_bot: false },
 			]);
 
 			if (error) {
@@ -68,7 +110,7 @@ function Input() {
 				<textarea
 					value={inputValue}
 					onChange={handleInputChange}
-					placeholder={selectedChatId ? "Send your message to Dr.Freud...." : "Please select or create a new chat to send a message."}
+					placeholder="Send your message to Dr.Freud...."
 					className={`flex-grow m-10 outline-none border-none rounded-custom min-h-28 bg-mindful-gray-10 text-lg font-semibold text-slate-600 placeholder-slate-600 resize-none overflow-y-scroll max-h-60`}
 					rows={1}
 					onKeyDown={(event) => {
