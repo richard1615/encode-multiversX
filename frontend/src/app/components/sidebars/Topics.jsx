@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CircularProgress from '@mui/material/CircularProgress';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useChatStore } from '@/store/store';
+
 
 const ChatAvatars = [
   "/icons/avatar-0.svg",
@@ -65,8 +67,12 @@ function TopicItem({ id, name, avatar, selectedChatId, setSelectedChatId, conver
   );
 }
 
-function Topics({ user, selectedChatId, setSelectedChatId }) {
-  const [conversations, setConversations] = useState([]);
+function Topics() {
+  const user = useChatStore((state) => state.user);
+  const conversations = useChatStore((state) => state.conversations);
+  const setConversations = useChatStore((state) => state.setConversations);
+  const selectedChatId = useChatStore((state) => state.selectedChatId);
+  const setSelectedChatId = useChatStore((state) => state.setSelectedChatId);
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClientComponentClient();
 

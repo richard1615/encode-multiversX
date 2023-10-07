@@ -5,12 +5,14 @@ import Topics from '@/app/components/sidebars/Topics'
 import ChatWindow from './components/chat/ChatWindow'
 import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useChatStore } from '@/store/store'
+
 
 export default function Home() {
   const supabase = createClientComponentClient()
   const router = useRouter()
-  const [user, setUser] = useState(null)
-  const [selectedChatId, setSelectedChatId] = useState(null)
+  const user = useChatStore((state) => state.user)
+  const setUser = useChatStore((state) => state.setUser)
 
   useEffect(() => {
     async function fetchUser() {
@@ -31,8 +33,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-row">
-      <Topics user={user} selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} />
-      <ChatWindow user={user} selectedChatId={selectedChatId} />
+      <Topics />
+      <ChatWindow />
     </div>
   )
 }

@@ -3,10 +3,12 @@ import UserMessage from './UserMessage'
 import BotMessage from './BotMessage'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState, useEffect } from 'react';
+import { useChatStore } from '@/store/store';
 
-const MessageWindow = ({ selectedChatId }) => {
+const MessageWindow = () => {
   const supabase = createClientComponentClient();
   const [messages, setMessages] = useState([]);
+  const selectedChatId = useChatStore((state) => state.selectedChatId);
 
   useEffect(() => {
     async function getMessages() {
@@ -43,7 +45,7 @@ const MessageWindow = ({ selectedChatId }) => {
   return (
     <div className='flex flex-col flex-grow p-10 overflow-y-scroll'>
       {
-        messages === null ? (
+        messages?.length === 0 ? (
           <div className="text-center text-gray-500 italic">
             👋 Hey there! How can I assist you today? Just start typing or ask any question to begin our chat.
           </div>
