@@ -45,7 +45,7 @@ const MessageWindow = () => {
   return (
     <div className='flex flex-col flex-grow p-10 overflow-y-scroll'>
       {
-        messages?.length === 0 ? (
+         (!messages || messages.length === 0) ? (
           <div className="text-center text-gray-500 italic">
             👋 Hey there! How can I assist you today? Just start typing or ask any question to begin our chat.
           </div>
