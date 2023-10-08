@@ -17,6 +17,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-highlight": "^0.15.0",
     "zustand": "^4.4.3"
   },
   "devDependencies": {
