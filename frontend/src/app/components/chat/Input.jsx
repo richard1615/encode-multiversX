@@ -15,12 +15,13 @@ function Input() {
 	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 	const [inputValue, setInputValue] = useState('');
 	const supabase = createClientComponentClient();
-	const selectedChatId = useChatStore((state) => state.selectedChatId);
-	const user = useChatStore((state) => state.user);
-	const conversations = useChatStore((state) => state.conversations);
-	const setConversations = useChatStore((state) => state.setConversations);
-	const setSelectedChatId = useChatStore((state) => state.setSelectedChatId);
-
+	const {
+		selectedChatId,
+		user,
+		conversations,
+		setConversations,
+		setSelectedChatId,
+	} = useChatStore();
 
 	const handleInputChange = (event) => {
 		const target = event.target;
@@ -53,27 +54,19 @@ function Input() {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-		let chatIdToSend;
-		if (!selectedChatId) {
-			try {
-				chatIdToSend = await handleAddNewConversation();
-			} catch (err) {
-				console.error("Error creating new conversation:", err.message);
-				return; // Exit early if we couldn't create a new chat
-			}
-		} else {
-			chatIdToSend = selectedChatId;
-		}
+		let chatIdToSend = selectedChatId;
 		try {
+			if (!selectedChatId) {
+				chatIdToSend = await handleAddNewConversation();
+			}
+			
 			// Send to DB
-			const { data, error } = await supabase.from('messages').insert([
+			const { error } = await supabase.from('messages').insert([
 				{ text: inputValue, conversation_id: chatIdToSend, is_bot: false },
 			]);
-
 			if (error) {
 				throw error;
 			}
-			console.log('data:', data);
 
 			// Send to ML server
 			const mlResponse = await fetch(`${baseUrl}/generate`, {
@@ -93,9 +86,6 @@ function Input() {
 			if (!mlResponse.ok) {
 				throw new Error(`ML server responded with status ${mlResponse.status}`);
 			}
-
-			const mlData = await mlResponse.json();
-			console.log('mlData:', mlData);
 		} catch (err) {
 			console.error("Error in handleSubmit:", err.message);
 		} finally {
@@ -110,7 +100,7 @@ function Input() {
 				<textarea
 					value={inputValue}
 					onChange={handleInputChange}
-					placeholder="Send your message to Dr.Freud...."
+					placeholder="Send a message"
 					className={`flex-grow m-10 outline-none border-none rounded-custom min-h-28 bg-mindful-gray-10 text-lg font-semibold text-slate-600 placeholder-slate-600 resize-none overflow-y-scroll max-h-60`}
 					rows={1}
 					onKeyDown={(event) => {
