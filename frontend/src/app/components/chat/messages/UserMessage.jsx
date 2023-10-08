@@ -3,8 +3,8 @@ import Image from 'next/image'
 
 const UserMessage = ({ message }) => {
     return (
-        <div className='flex justify-end w-full relative mb-5'>
-            <div className='flex bg-mindful-gray-80 rounded-2xl p-3 max-w-lg'>
+        <div className='flex justify-end w-full relative mb-6'>
+            <div className='flex bg-mindful-gray-80 rounded-2xl p-5 max-w-3xl'>
                 <div className='flex flex-col text-white flex-grow overflow-hidden'>
                     { message }
                 </div>

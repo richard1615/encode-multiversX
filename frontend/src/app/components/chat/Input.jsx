@@ -111,7 +111,7 @@ function Input() {
 				/>
 				<button
 					type="submit"
-					className={`flex absolute bottom-0 right-4 justify-center items-center bg-leaf-green text-white rounded-full focus:outline-none w-16 h-16 m-6`}
+					className={`flex absolute bottom-0 right-4 justify-center items-center bg-leaf-green hover:bg-[#97a754] text-white rounded-full focus:outline-none w-16 h-16 m-6`}
 				>
 					<Image src='/icons/send.svg' alt='Send' width={35} height={35} />
 				</button>
