@@ -5,10 +5,12 @@ from langchain.chat_models import ChatOpenAI
 from langchain.agents import AgentType
 import os
 from langchain.chat_models import ChatOpenAI
-from tools.custom_multix_tools import (GetAccountBalanceTool)
+from tools.custom_multix_tools import (GetAccountBalanceTool,
+                                       SendTransactionTool)
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from flask_cors import CORS
+from langchain.schema import SystemMessage
 
 load_dotenv()
 app = Flask(__name__)
@@ -17,6 +19,20 @@ CORS(app)
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
+
+
+system_message = SystemMessage(
+
+  content="""You are a specialized AI, designed to act as an chatbot that help facilitate blockchain transaction
+
+-- After calling the send transaction tool create a message that contains $start$reciver_address|value$end$
+"""
+
+)
+
+agent_kwargs = {
+    "system_message": system_message,
+}
 
 @app.route('/')
 def index():
@@ -61,12 +77,14 @@ def generate_output():
     os.environ["OPENAI_API_KEY"] = data['openAIKey']
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
     tools = [
-        GetAccountBalanceTool()
+        GetAccountBalanceTool(),
+        SendTransactionTool()
     ]
     agent = initialize_agent(tools,
                              llm,
                              agent=AgentType.OPENAI_FUNCTIONS,
-                             verbose=True)
+                             verbose=True,
+                             agent_kwargs=agent_kwargs)
     
     output = agent.run(data['text'])
 
@@ -85,4 +103,4 @@ def generate_output():
     return jsonify(message="Success")
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
