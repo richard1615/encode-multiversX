@@ -25,3 +25,5 @@ htmlcov/
 *,cover
 
 template.yaml
+code_scrapped/
+pages_scrape/
