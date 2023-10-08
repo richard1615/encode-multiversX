@@ -77,7 +77,7 @@ function Input() {
 				body: JSON.stringify({
 					text: inputValue,
 					user_id: user.id,
-					chat_id: selectedChatId,
+					chat_id: chatIdToSend,
 					openAIKey: localStorage.getItem('openAIKey'),
 				}),
 			});
