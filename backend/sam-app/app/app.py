@@ -40,7 +40,7 @@ def index():
 
 
 
-@app.route('/generate', methods=['GET'])
+@app.route('/generate', methods=['GET', 'POST'])
 def generate_output():
     try:
         data = request.get_json()
