@@ -31,7 +31,6 @@ function Input() {
 			if (error) {
 				throw error;
 			}
-			console.log('data:', data);
 
 			// Send to ML server
 			const mlResponse = await fetch(`${baseUrl}/generate`, {
@@ -53,7 +52,6 @@ function Input() {
 			}
 
 			const mlData = await mlResponse.json();
-			console.log('mlData:', mlData);
 		} catch (err) {
 			console.error("Error in handleSubmit:", err.message);
 		} finally {
@@ -79,7 +77,7 @@ function Input() {
 				/>
 				<button
 					type="submit"
-					className={`flex absolute bottom-0 right-4 justify-center items-center bg-leaf-green text-white rounded-full focus:outline-none w-16 h-16 m-6`}
+					className={`flex absolute bottom-0 right-4 justify-center items-center bg-leaf-green hover:bg-[#97a754] text-white rounded-full focus:outline-none w-16 h-16 m-6`}
 				>
 					<Image src='/icons/send.svg' alt='Send' width={35} height={35} />
 				</button>
