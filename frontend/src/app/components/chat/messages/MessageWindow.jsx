@@ -18,7 +18,11 @@ const MessageWindow = () => {
           .select('text, is_bot')
           .eq('conversation_id', selectedChatId)
           .order('created_at', { ascending: true });
-        setMessages(data);
+        if (data === null) {
+          setMessages([]);
+        } else {
+          setMessages(data);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -34,7 +38,14 @@ const MessageWindow = () => {
         schema: 'public',
         table: 'messages',
       }, payload => {
-        setMessages(messages => [...messages, payload.new]);
+        setMessages(prevMessages => {
+          // Check if message with this ID already exists
+          if (prevMessages.some(msg => msg.id === payload.new.id)) {
+            return prevMessages; // Return the unchanged state
+          }
+          // Otherwise, append the new message
+          return [...prevMessages, payload.new];
+        });
       }).subscribe();
 
     return () => {
@@ -45,7 +56,7 @@ const MessageWindow = () => {
   return (
     <div className='flex flex-col flex-grow p-10 overflow-y-scroll'>
       {
-         (!messages || messages.length === 0) ? (
+        (!messages || messages.length === 0) ? (
           <div className="text-center text-gray-500 italic">
             👋 Hey there! How can I assist you today? Just start typing or ask any question to begin our chat.
           </div>
