@@ -78,7 +78,7 @@ function Input() {
 					text: inputValue,
 					user_id: user.id,
 					chat_id: chatIdToSend,
-					openAIKey: localStorage.getItem('openAIKey'),
+					openAIKey: window?.localStorage?.getItem('openAIKey'),
 				}),
 			});
 

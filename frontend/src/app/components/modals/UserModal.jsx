@@ -14,10 +14,15 @@ export default function BasicPopover() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [editingAPIKey, setEditingAPIKey] = useState(false);
   const [editingWallet, setEditingWallet] = useState(false);
-  const [openAPIKey, setOpenAPIKey] = useState(localStorage.getItem('openAIKey') || '');
-  const [walletAddress, setWalletAddress] = useState(localStorage.getItem('walletAddress') || '');
+  const [openAPIKey, setOpenAPIKey] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
   const [tempAPIKey, setTempAPIKey] = useState(openAPIKey);
   const [tempWalletAddress, setTempWalletAddress] = useState(walletAddress);
+
+  useEffect(() => {
+    setOpenAPIKey(window?.localStorage?.getItem('openAIKey') || '');
+    setWalletAddress(window?.localStorage?.getItem('walletAddress') || '');
+  }, []);
 
   useEffect(() => {
     if (anchorEl === null) {
@@ -43,7 +48,7 @@ export default function BasicPopover() {
 
   const saveAPIKey = () => {
     setOpenAPIKey(tempAPIKey);
-    localStorage.setItem('openAIKey', tempAPIKey);
+    window?.localStorage?.setItem('openAIKey', tempAPIKey);
     setEditingAPIKey(false);
   };
 
@@ -54,7 +59,7 @@ export default function BasicPopover() {
 
   const saveWalletAddress = () => {
     setWalletAddress(tempWalletAddress);
-    localStorage.setItem('walletAddress', tempWalletAddress);
+    window?.localStorage?.setItem('walletAddress', tempWalletAddress);
     setEditingWallet(false);
   };
 
