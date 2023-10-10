@@ -7,6 +7,9 @@ import { ApiNetworkProvider } from "@multiversx/sdk-network-providers";
 import { Transaction, TransactionPayload, TokenTransfer } from "@multiversx/sdk-core";
 import { Account } from "@multiversx/sdk-core";
 import { ProxyNetworkProvider } from "@multiversx/sdk-network-providers";
+import { ExtensionLoginButton } from '@multiversx/sdk-dapp/UI/extension/ExtensionLoginButton/ExtensionLoginButton';
+import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions";
+
 
 function Header() {
   const [walletProvider, isConnected, setIsConnected] = useWalletProvider();
@@ -64,13 +67,28 @@ function Header() {
     }
   };
 
+  const connectWallet2 = async () => {
+    console.log("Hi")
+    const { sessionId, error } = await sendTransactions({
+      transactions: [
+          {
+            value: '1000000000000000000',
+            receiver: 'erd1xjwy83a59ggvvyzu3gdq4q2dp85lqqdf9gkus6wmqupmsnwc2laqtmhsej'
+          },
+        ]
+      });
+  };
+
   return (
     <div className="flex items-center justify-between px-4 py-7 border-b border-b-mindful-gray-40">
       <h1 className="text-4xl text-mindful-gray-80 font-bold">MxAI</h1>
       <div className="flex items-center">
         <ChainInfo connected={isConnected} />
         <UserModal />
-        <Button onClick={connectWallet} />
+        <ExtensionLoginButton
+              loginButtonText='DeFi Wallet'
+            />
+        <Button onClick={connectWallet2} />
         {/* <Button onClick={signTransaction} /> */}
       </div>
     </div>
