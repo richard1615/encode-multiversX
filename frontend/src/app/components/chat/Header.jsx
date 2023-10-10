@@ -6,64 +6,63 @@ import useWalletProvider from '@/hooks/useWalletProvider';
 import { ApiNetworkProvider } from "@multiversx/sdk-network-providers";
 import { Transaction, TransactionPayload, TokenTransfer } from "@multiversx/sdk-core";
 import { Account } from "@multiversx/sdk-core";
+import { ProxyNetworkProvider } from "@multiversx/sdk-network-providers";
 
 function Header() {
   const [walletProvider, isConnected, setIsConnected] = useWalletProvider();
-  const apiNetworkProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com");
   const [account, setAccount] = useState(null);
 
-  useEffect(() => {
-    console.log(account);
+  // useEffect(() => {
+  //   console.log(account);
 
-    if (!walletProvider || !apiNetworkProvider) {
-      return;
-    }
+  //   if (!walletProvider || !apiNetworkProvider) {
+  //     return;
+  //   }
 
-    const fetchAccountData = async () => {
-      if (!walletProvider.account || !walletProvider.account.address) {
-        return;
-      }
+  //   const fetchAccountData = async () => {
+  //     if (!walletProvider.account || !walletProvider.account.address) {
+  //       return;
+  //     }
 
-      const _account = new Account(walletProvider.account.address);
-      const _accountOnNetwork = await apiNetworkProvider.getAccount(walletProvider.account.address);
-      if (_accountOnNetwork) {
-        _account.update(_accountOnNetwork);
-        setAccount(_account);
-      }
-    };
+  //     const _account = new Account(walletProvider.account.address);
+  //     const _accountOnNetwork = await apiNetworkProvider.getAccount(walletProvider.account.address);
+  //     if (_accountOnNetwork) {
+  //       _account.update(_accountOnNetwork);
+  //       setAccount(_account);
+  //     }
+  //   };
 
-    fetchAccountData();
-  }, [walletProvider, apiNetworkProvider]);
-
-
+  //   fetchAccountData();
+  // }, [walletProvider, apiNetworkProvider]);
 
   const connectWallet = async () => {
+    const proxyNetworkProvider = new ProxyNetworkProvider("https://devnet-gateway.multiversx.com");
+    const apiNetworkProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com");
+
     try {
       const address = await walletProvider.login();
-      if (address) {
-        setIsConnected(true);
-      }
-      console.log(address);
-      console.log(walletProvider.account);
+      // const alice = new Account(address);
+      // const aliceOnNetwork = await apiNetworkProvider.getAccount(address);
+      // substituting address directly in string format doesn't work either
+
+      const tx = new Transaction({
+        data: new TransactionPayload("helloWorld"),
+        gasLimit: 70000,
+        sender: address,
+        receiver: 'erd17enrv0r7d8gqscplkw4ymec6j246ze54tklrfq4lshwyndpl6lcq4gjtx8',
+        value: TokenTransfer.egldFromAmount(1),
+        chainID: "D"
+      });
+
+      tx.setNonce(1);
+
+      await walletProvider.signTransaction(tx);
+      let txHash = await proxyNetworkProvider.sendTransaction(tx); 
+      console.log(txHash);
     } catch (error) {
       console.error("Error connecting wallet:", error);
     }
   };
-
-  const signTransaction = async () => {
-    const tx = new Transaction({
-      data: new TransactionPayload("helloWorld"),
-      gasLimit: 70000,
-      sender: "addressOfAlice",
-      receiver: "addressOfBob",
-      value: TokenTransfer.egldFromAmount(1),
-      chainID: "D"
-    });
-
-    tx.setNonce(account.getNonceThenIncrement());
-
-    await walletProvider.signTransaction(tx);
-  }
 
   return (
     <div className="flex items-center justify-between px-4 py-7 border-b border-b-mindful-gray-40">
@@ -72,7 +71,7 @@ function Header() {
         <ChainInfo connected={isConnected} />
         <UserModal />
         <Button onClick={connectWallet} />
-        <Button onClick={signTransaction} />
+        {/* <Button onClick={signTransaction} /> */}
       </div>
     </div>
   );
