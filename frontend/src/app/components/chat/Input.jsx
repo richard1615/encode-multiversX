@@ -54,12 +54,13 @@ function Input() {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		setInputValue('');
 		let chatIdToSend = selectedChatId;
 		try {
 			if (!selectedChatId) {
 				chatIdToSend = await handleAddNewConversation();
 			}
-			
+
 			// Send to DB
 			const { error } = await supabase.from('messages').insert([
 				{ text: inputValue, conversation_id: chatIdToSend, is_bot: false },
@@ -88,9 +89,6 @@ function Input() {
 			}
 		} catch (err) {
 			console.error("Error in handleSubmit:", err.message);
-		} finally {
-			// Reset input value regardless of success or error
-			setInputValue('');
 		}
 	};
 
