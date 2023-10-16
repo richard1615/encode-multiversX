@@ -11,7 +11,5 @@ export async function GET() {
     }
   });
 
-  console.log(response.data);
-
   return NextResponse.json({ buffer: response.data });
 }

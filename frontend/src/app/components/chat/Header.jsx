@@ -62,7 +62,6 @@ function Header() {
       <div className="flex items-center">
         <ChainInfo connected={isConnected} />
         <UserModal />
-        {/* <Button onClick={connectWallet} /> */}
       </div>
     </div>
   );
