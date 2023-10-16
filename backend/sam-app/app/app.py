@@ -42,7 +42,9 @@ repo_path = "../../../ml/github-scrapper/code_scrapped"
 system_message = SystemMessage(
     content="""You are a specialized AI, designed to act as an chatbot that help facilitate blockchain transaction
 
+-- When asked to generate a contract invoke the generate contract function while passing in the english description of the task
 -- After calling the send transaction tool create a message that contains $start$reciver_address|value$end$
+-- The generated contract code url should be sent in this format #wasmstart# url #wasmend#
 """
 )
 
@@ -102,14 +104,15 @@ class CodeGenerationTool(BaseTool):
     name = "code_geneartion"
     description = """
         Useful when you want to generate and compile code.
-        The input is the task that the code should do.
+        The input is a single string field expecting the english description task that the code should do.
         Output is the compiled WASM code link.
         """
     args_schema: Type[BaseModel] = CodeGenerationInput
 
     def _run(self, text: str):
+        global chat_id
         print("Generating code...")
-        code = code_geneartion("Generate contract code: ",text)
+        code = code_geneartion("Generate multiversx contract code: "+text)
             # store in supabase
         try:
             result = (
@@ -125,7 +128,7 @@ class CodeGenerationTool(BaseTool):
             )
         except Exception as e:
             print(e, "chat id must be valid")
-            return jsonify(message="chat_id must be valid")
+            return "Couldn't deploy but here is code: " + code
         
         rust_code = re.search(r"```rust\n(.*?)```", code, re.DOTALL).group(1)
         
@@ -149,7 +152,7 @@ class CodeGenerationTool(BaseTool):
         print("Uploading Code...")
         # upload to s3 with timestamp
         s3_key = f'basic_code_{time.time()}.wasm'
-        s3.upload_file(f'../../../ml/code/basic_code/output/code.wasm', bucket_name, s3_key)
+        s3.upload_file(f'../../../ml/code/basic_code/output/basic_code.wasm', bucket_name, s3_key)
         url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
 
         return url
@@ -180,6 +183,7 @@ def index():
 
 @app.route("/generate", methods=["GET", "POST"])
 def generate_output():
+    global chat_id
     try:
         data = request.get_json()
     except:
@@ -246,4 +250,4 @@ def generate_output():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8000)

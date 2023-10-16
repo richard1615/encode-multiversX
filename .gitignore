@@ -27,3 +27,5 @@ htmlcov/
 template.yaml
 code_scrapped/
 pages_scrape/
+output/
+wasm/
