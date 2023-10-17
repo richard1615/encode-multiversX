@@ -54,6 +54,7 @@ function Input() {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		if (!inputValue.trim()) return;
 		setInputValue('');
 		let chatIdToSend = selectedChatId;
 		try {
@@ -99,7 +100,10 @@ function Input() {
 					value={inputValue}
 					onChange={handleInputChange}
 					placeholder="Send a message"
-					className={`flex-grow m-10 outline-none border-none rounded-custom min-h-28 bg-mindful-gray-10 text-lg font-semibold text-slate-600 placeholder-slate-600 resize-none overflow-y-scroll max-h-60`}
+					style={{
+						width: 'calc(90% - 4rem)'
+					}}
+					className={`m-10 outline-none border-none rounded-custom min-h-28 bg-mindful-gray-10 text-lg font-semibold text-slate-600 placeholder-slate-400 resize-none overflow-y-scroll max-h-60`}
 					rows={1}
 					onKeyDown={(event) => {
 						if (event.key === 'Enter' && !event.shiftKey) {
@@ -107,12 +111,15 @@ function Input() {
 						}
 					}}
 				/>
-				<button
-					type="submit"
-					className={`flex absolute bottom-0 right-4 justify-center items-center bg-leaf-green hover:bg-[#97a754] text-white rounded-full focus:outline-none w-16 h-16 m-6`}
-				>
-					<Image src='/icons/send.svg' alt='Send' width={35} height={35} />
-				</button>
+				<div className='absolute right-4 flex justify-center items-center h-full w-[10%]'>
+					<button
+						type="submit"
+						disabled={inputValue === ''}
+						className={`flex justify-center items-center bg-leaf-green hover:bg-[#97a754] text-white rounded-full focus:outline-none w-16 h-16 m-6`}
+					>
+						<Image src='/icons/send.svg' alt='Send' width={35} height={35} />
+					</button>
+				</div>
 			</div>
 		</form>
 	)
