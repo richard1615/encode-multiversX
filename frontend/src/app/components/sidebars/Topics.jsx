@@ -10,7 +10,9 @@ import { useChatStore } from '@/store/store';
 const ChatAvatars = [
   "/icons/avatar-0.svg",
   "/icons/avatar-1.svg",
-  "/icons/avatar-2.svg"
+  "/icons/avatar-2.svg",
+  "/icons/avatar-3.svg",
+  "/icons/avatar-4.svg",
 ];
 
 const topicItemClass = (isSelected, isDeleting) =>

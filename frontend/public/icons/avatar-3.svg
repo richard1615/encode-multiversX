@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Superego/08-health-plus">
+<g clip-path="url(#clip0_184_288)">
+<rect width="64" height="64" rx="32" fill="#E8DDD9"/>
+<rect id="Vector" x="21.3333" width="21.3333" height="64" fill="#6D4B36"/>
+<rect id="Vector_2" x="64" y="21.3333" width="21.3333" height="64" transform="rotate(90 64 21.3333)" fill="#AC836C"/>
+<rect id="Vector_3" x="21.3333" y="21.3333" width="21.3333" height="21.3333" fill="#E8DDD9"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_184_288">
+<rect width="64" height="64" rx="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>
