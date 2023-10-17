@@ -5,6 +5,7 @@ import Image from 'next/image';
 import CircularProgress from '@mui/material/CircularProgress';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useChatStore } from '@/store/store';
+import Snackbar from '@mui/material/Snackbar';
 
 
 const ChatAvatars = [
@@ -25,9 +26,19 @@ function TopicItem({ id, name, avatar, selectedChatId, setSelectedChatId, conver
   const isSelected = id === selectedChatId;
   const [isDeleting, setIsDeleting] = useState(false);
   const supabase = createClientComponentClient();
+  const [open, setOpen] = useState(false);
 
   const handleShareClick = () => {
     console.log("Share button clicked");
+    navigator.clipboard.writeText(`${window.location.origin}/chats/${id}`);
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
 
   const handleDeleteClick = async () => {
@@ -65,6 +76,13 @@ function TopicItem({ id, name, avatar, selectedChatId, setSelectedChatId, conver
           </button>
         </div>
       </div>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        message="Link copied to clipboard"
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'centre' }}
+      />
     </div>
   );
 }
