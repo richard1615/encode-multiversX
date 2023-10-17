@@ -103,7 +103,7 @@ function Input() {
 					style={{
 						width: 'calc(90% - 4rem)'
 					}}
-					className={`m-10 outline-none border-none rounded-custom min-h-28 bg-mindful-gray-10 text-lg font-semibold text-slate-600 placeholder-slate-400 resize-none overflow-y-scroll max-h-60`}
+					className={`pl-1 m-10 outline-none border-none rounded-custom min-h-28 bg-mindful-gray-10 text-lg font-semibold text-slate-600 placeholder-slate-400 resize-none overflow-y-scroll max-h-60`}
 					rows={1}
 					onKeyDown={(event) => {
 						if (event.key === 'Enter' && !event.shiftKey) {
