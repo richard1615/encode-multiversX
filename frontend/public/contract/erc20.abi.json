@@ -1,0 +1,219 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.75.0-nightly",
+            "commitHash": "97c81e1b537088f1881c8894ee8579812ed9b6d1",
+            "commitDate": "2023-10-07",
+            "channel": "Nightly",
+            "short": "rustc 1.75.0-nightly (97c81e1b5 2023-10-07)"
+        },
+        "contractCrate": {
+            "name": "erc20",
+            "version": "0.0.0",
+            "gitVersion": "v0.43.5-3-gf3ee72867"
+        },
+        "framework": {
+            "name": "multiversx-sc",
+            "version": "0.43.5"
+        }
+    },
+    "name": "SimpleErc20Token",
+    "constructor": {
+        "docs": [
+            "Constructor, is called immediately after the contract is created",
+            "Will set the fixed global token supply and give all the supply to the creator."
+        ],
+        "inputs": [
+            {
+                "name": "total_supply",
+                "type": "BigUint"
+            }
+        ],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "docs": [
+                "Total number of tokens in existence."
+            ],
+            "name": "totalSupply",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "docs": [
+                "Gets the balance of the specified address.",
+                "",
+                "Arguments:",
+                "",
+                "* `address` The address to query the the balance of",
+                ""
+            ],
+            "name": "balanceOf",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "address",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "docs": [
+                "The amount of tokens that an owner allowed to a spender.",
+                "",
+                "Arguments:",
+                "",
+                "* `owner` The address that owns the funds.",
+                "* `spender` The address that will spend the funds.",
+                ""
+            ],
+            "name": "allowance",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "owner",
+                    "type": "Address"
+                },
+                {
+                    "name": "spender",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "docs": [
+                "Transfer token to a specified address from sender.",
+                "",
+                "Arguments:",
+                "",
+                "* `to` The address to transfer to.",
+                ""
+            ],
+            "name": "transfer",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "to",
+                    "type": "Address"
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "docs": [
+                "Use allowance to transfer funds between two accounts.",
+                "",
+                "Arguments:",
+                "",
+                "* `sender` The address to transfer from.",
+                "* `recipient` The address to transfer to.",
+                "* `amount` the amount of tokens to be transferred.",
+                ""
+            ],
+            "name": "transferFrom",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "sender",
+                    "type": "Address"
+                },
+                {
+                    "name": "recipient",
+                    "type": "Address"
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "docs": [
+                "Approve the given address to spend the specified amount of tokens on behalf of the sender.",
+                "It overwrites any previously existing allowance from sender to beneficiary.",
+                "",
+                "Arguments:",
+                "",
+                "* `spender` The address that will spend the funds.",
+                "* `amount` The amount of tokens to be spent.",
+                ""
+            ],
+            "name": "approve",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "spender",
+                    "type": "Address"
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        }
+    ],
+    "events": [
+        {
+            "identifier": "transfer",
+            "inputs": [
+                {
+                    "name": "sender",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "recipient",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "identifier": "approve",
+            "inputs": [
+                {
+                    "name": "sender",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "recipient",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "amount",
+                    "type": "BigUint"
+                }
+            ]
+        }
+    ],
+    "hasCallback": false,
+    "types": {}
+}
