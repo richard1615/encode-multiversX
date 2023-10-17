@@ -17,7 +17,7 @@ const MessageWindow = () => {
           .from('messages')
           .select('text, is_bot')
           .eq('conversation_id', selectedChatId)
-          .order('created_at', { ascending: true });
+          .order('created_at', { ascending: false });
         if (data === null) {
           setMessages([]);
         } else {
@@ -44,7 +44,7 @@ const MessageWindow = () => {
             return prevMessages; // Return the unchanged state
           }
           // Otherwise, append the new message
-          return [...prevMessages, payload.new];
+          return [payload.new, ...prevMessages];
         });
       }).subscribe();
 
@@ -54,7 +54,7 @@ const MessageWindow = () => {
   }, [supabase]);
 
   return (
-    <div className='flex flex-col flex-grow p-10 overflow-y-scroll'>
+    <div className='flex flex-col-reverse flex-grow p-10 overflow-y-scroll'>
       {
         (!messages || messages.length === 0) ? (
           <div className="text-center text-gray-500 italic">
