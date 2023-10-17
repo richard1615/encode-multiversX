@@ -39,8 +39,8 @@ const MessageWindow = () => {
         table: 'messages',
       }, payload => {
         setMessages(prevMessages => {
-          // Check if message with this ID already exists
-          if (prevMessages.some(msg => msg.id === payload.new.id)) {
+          // Check if message with this ID already exists and the conversation ID matches
+          if (prevMessages.some(msg => msg.id === payload.new.id) && payload.new.conversation_id !== selectedChatId) {
             return prevMessages; // Return the unchanged state
           }
           // Otherwise, append the new message
