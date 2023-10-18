@@ -28,7 +28,7 @@ function ContractForm({ contractAddress }) {
   const callContract = async (methodName, ...args) => {
     console.log(`Called ${methodName} with args:`, args);
     const abiUrl = "https://github.com/CommanderAstern/encode-multiversX/raw/sdk-2/frontend/public/contract/erc20.abi.json"
-    const response = await axios.get(`http://localhost:3000/api/abi?abiUrl=${abiUrl}`);
+    const response = await axios.get(`${window.location.origin}/api/abi?abiUrl=${abiUrl}`);
     const abiRegistry = AbiRegistry.create(response.data.data);
     const networkProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com");
     const _contractAddress = Address.fromBech32(contractAddress);

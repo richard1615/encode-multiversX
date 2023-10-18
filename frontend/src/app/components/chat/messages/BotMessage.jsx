@@ -132,7 +132,7 @@ const BotMessage = ({ message }) => {
             const deployerOnNetwork = await apiNetworkProvider.getAccount(Address.fromBech32(deployerAddress));
             const contract = new SmartContract();
 
-            const response = await axios.get("http://localhost:3000/api?wasmUrl=" + wasmLink);
+            const response = await axios.get(`${window.location.origin}/api?wasmUrl=${wasmLink}`);
             const buffer = Buffer.from(response.data.buffer);
             const code = Code.fromBuffer(buffer);
 

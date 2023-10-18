@@ -21,7 +21,7 @@ const deployContract = async () => {
     const deployerOnNetwork = await apiNetworkProvider.getAccount(Address.fromBech32(deployerAddress));
     const contract = new SmartContract();
 
-    const response = await axios.get("http://localhost:3000/api");
+    const response = await axios.get(`${window.location.origin}/api`);
     const buffer = Buffer.from(response.data.buffer);
     const code = Code.fromBuffer(buffer);
 
