@@ -16,6 +16,7 @@
     "@multiversx/sdk-extension-provider": "^3.0.0",
     "@multiversx/sdk-network-providers": "^2.0.0",
     "@multiversx/sdk-wallet": "^4.2.0",
+    "@netlify/plugin-nextjs": "^4.41.0",
     "@supabase/auth-helpers-nextjs": "^0.8.1",
     "@supabase/supabase-js": "^2.38.0",
     "axios": "^1.5.1",
