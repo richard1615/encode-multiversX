@@ -4,6 +4,7 @@ import axios from 'axios';
 import Image from 'next/image';
 
 import Button from './Button';
+import ContractForm from '../forms/ContractForm';
 import useWalletProvider from '@/hooks/useWalletProvider';
 import { useChatStore } from '@/store/store';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -28,6 +29,7 @@ const BotMessage = ({ message }) => {
     const [walletProvider, isConnected, setIsConnected] = useWalletProvider();
     const [transactionDetails, setTransactionDetails] = useState(null);
     const [messageSegments, setMessageSegments] = useState([]);
+    const [erc20Address, setErc20Address] = useState('');
     const supabase = createClientComponentClient();
     const [wasmLink, setWasmLink] = useState('');
     const {
@@ -53,7 +55,7 @@ const BotMessage = ({ message }) => {
         setWasmLink(_wasmLink);
     }, [message]);
 
-    // Highlight code
+    // Highlight code, parse markdown links and extract erc20 address
     useEffect(() => {
         const segments = [];
         let remainingMsg = message.replace(/\$start\$(.*?)\|(.*?)\$end\$/, ''); // Removing transaction details
@@ -78,9 +80,10 @@ const BotMessage = ({ message }) => {
             if (remainingMsg.includes('```')) {
                 extractAndHighlight(/```(.*?)```/s); // Adjusted the regex to detect triple backticks
             } else {
+                parseErc20Address(remainingMsg);
                 remainingMsg = remainingMsg.replace(/\$start\$(.*?)\|(.*?)\$end\$/, '$1 $2') // Keeps the content between the tags
-                    .replace(/#wasmstart#(.*?)#wasmend#/, '$1'); // Keeps the content between the tags
-
+                    .replace(/#wasmstart#(.*?)#wasmend#/, '$1')
+                    .replace(/#erc20start#(.*?)#erc20end#/, ''); // Keeps the content between the tags
                 segments.push(...parseMarkdownLinks(remainingMsg));
                 remainingMsg = '';
             }
@@ -112,6 +115,15 @@ const BotMessage = ({ message }) => {
         }
 
         return jsxOutput;
+    }
+
+    const parseErc20Address = (input) => {
+        let _erc20Address = '';
+        const match = input.match(/#erc20start#(.*?)#erc20end#/)
+        if (match) {
+            _erc20Address = match[1].trim();
+        }
+        setErc20Address(_erc20Address);
     }
 
     const deployContract = async () => {
@@ -225,6 +237,7 @@ const BotMessage = ({ message }) => {
                         <Button onClick={handleTransactionClick} label="Execute Transaction" />
                     )}
                     {wasmLink && (<Button onClick={deployContract} label="Deploy Contract" />)}
+                    {erc20Address && <ContractForm contractAddress={erc20Address} />}
                 </div>
             </div>
             <span className='w-10 h-10 rounded-br-full bg-light-cream absolute bottom-0 left-0 transform translate-y-1/2'></span>
