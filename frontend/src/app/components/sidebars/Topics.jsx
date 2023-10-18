@@ -81,7 +81,7 @@ function TopicItem({ id, name, avatar, selectedChatId, setSelectedChatId, conver
         autoHideDuration={3000}
         message="Link copied to clipboard"
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'centre' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       />
     </div>
   );
