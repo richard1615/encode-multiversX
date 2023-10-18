@@ -12,11 +12,13 @@ import { ResultsParser } from "@multiversx/sdk-core";
 import { Code } from '@multiversx/sdk-core';
 import useWalletProvider from '@/hooks/useWalletProvider';
 import { useChatStore } from '@/store/store';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const BotMessage = ({ message }) => {
     const [walletProvider, isConnected, setIsConnected] = useWalletProvider();
     const [transactionDetails, setTransactionDetails] = useState(null);
     const [messageSegments, setMessageSegments] = useState([]);
+    const supabase = createClientComponentClient();
     const [wasmLink, setWasmLink] = useState('');
     const {
         selectedChatId,
@@ -24,6 +26,7 @@ const BotMessage = ({ message }) => {
         setSelectedChatId,
     } = useChatStore();
 
+    // Extract transaction details
     useEffect(() => {
         const parsed = message.match(/\$start\$(.*?)\|(.*?)\$end\$/);
         if (parsed && parsed.length === 3) {
@@ -31,6 +34,7 @@ const BotMessage = ({ message }) => {
         }
     }, [message]);
 
+    // Extract wasm link
     useEffect(() => {
         let _wasmLink = '';
         const match = message.match(/#wasmstart#(.*?)#wasmend#/);
@@ -40,6 +44,7 @@ const BotMessage = ({ message }) => {
         setWasmLink(_wasmLink);
     }, [message]);
 
+    // Highlight code
     useEffect(() => {
         const segments = [];
         let remainingMsg = message.replace(/\$start\$(.*?)\|(.*?)\$end\$/, ''); // Removing transaction details
@@ -67,13 +72,38 @@ const BotMessage = ({ message }) => {
                 remainingMsg = remainingMsg.replace(/\$start\$(.*?)\|(.*?)\$end\$/, '$1 $2') // Keeps the content between the tags
                     .replace(/#wasmstart#(.*?)#wasmend#/, '$1'); // Keeps the content between the tags
 
-                segments.push(remainingMsg);
+                segments.push(...parseMarkdownLinks(remainingMsg));
                 remainingMsg = '';
             }
         }
 
         setMessageSegments(segments);
     }, [message]);
+
+    const parseMarkdownLinks = (input) => {
+        const regex = /\[([^\]]+)\]\(([^\)]+)\)/g;
+
+        let jsxOutput = [];
+        let lastIndex = 0;
+
+        let match;
+        while ((match = regex.exec(input)) !== null) {
+            const beforeText = input.slice(lastIndex, match.index);
+            if (beforeText) {
+                jsxOutput.push(beforeText);
+            }
+
+            jsxOutput.push(<a href={match[2]} key={match.index} target="_blank" rel="noopener noreferrer" className='text-blue-900'>{match[1]}</a>);
+            lastIndex = match.index + match[0].length;
+        }
+
+        const afterText = input.slice(lastIndex);
+        if (afterText) {
+            jsxOutput.push(afterText);
+        }
+
+        return jsxOutput;
+    }
 
     const deployContract = async () => {
         const proxyNetworkProvider = new ProxyNetworkProvider("https://devnet-gateway.multiversx.com");
@@ -103,21 +133,37 @@ const BotMessage = ({ message }) => {
             await apiNetworkProvider.sendTransaction(_deployTransaction);
             let transactionOnNetwork = await new TransactionWatcher(apiNetworkProvider).awaitCompleted(_deployTransaction);
 
-            console.log("Transaction hash:", transactionOnNetwork);
+            let contractAddress = SmartContract.computeAddress(deployTransaction.getSender(), deployTransaction.getNonce());
 
             const { returnCode } = new ResultsParser().parseUntypedOutcome(transactionOnNetwork);
             console.log("Return code:", returnCode);
 
             if (returnCode.isSuccess()) {
                 console.log("Contract deployed successfully");
+                const explorerLink = `https://devnet-explorer.multiversx.com/accounts/${contractAddress}`;
                 const { error } = await supabase.from('messages').insert([
-                    { text: "The contract is deployed successfully at ${transactionOnNetwork}", conversation_id: selectedChatId, is_bot: true },
+                    {
+                        text: `Your contract has been deployed successfully! Check it out [here](${explorerLink})`,
+                        conversation_id: selectedChatId,
+                        is_bot: true
+                    }
                 ]);
                 if (error) {
                     throw error;
                 }
             } else {
                 console.log("Contract deployment failed");
+                const explorerLink = `https://devnet-explorer.multiversx.com/transactions/${transactionOnNetwork.hash}`;
+                const { error } = await supabase.from('messages').insert([
+                    {
+                        text: `Your contract deployment failed. Check out the [transaction](${explorerLink}) on the explorer.`,
+                        conversation_id: selectedChatId,
+                        is_bot: true
+                    }
+                ]);
+                if (error) {
+                    throw error;
+                }
             }
         } catch (error) {
             console.error(error);
