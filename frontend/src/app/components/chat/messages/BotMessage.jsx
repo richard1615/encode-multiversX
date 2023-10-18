@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Highlight from 'react-highlight';
-import Button from './Button';
-import Image from 'next/image';
-import { ProxyNetworkProvider, ApiNetworkProvider } from "@multiversx/sdk-network-providers";
-import { Address } from '@multiversx/sdk-core';
 import axios from 'axios';
-import { SmartContract } from "@multiversx/sdk-core";
-import { CodeMetadata } from "@multiversx/sdk-core";
-import { TransactionWatcher } from "@multiversx/sdk-core";
-import { ResultsParser } from "@multiversx/sdk-core";
-import { Code } from '@multiversx/sdk-core';
+import Image from 'next/image';
+
+import Button from './Button';
 import useWalletProvider from '@/hooks/useWalletProvider';
 import { useChatStore } from '@/store/store';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+
+import {
+  ApiNetworkProvider
+} from "@multiversx/sdk-network-providers";
+
+import {
+  Address,
+  SmartContract,
+  CodeMetadata,
+  TransactionWatcher,
+  ResultsParser,
+  Code,
+  Transaction, 
+  TokenTransfer
+} from "@multiversx/sdk-core";
+
 
 const BotMessage = ({ message }) => {
     const [walletProvider, isConnected, setIsConnected] = useWalletProvider();
@@ -22,9 +32,8 @@ const BotMessage = ({ message }) => {
     const [wasmLink, setWasmLink] = useState('');
     const {
         selectedChatId,
-        user,
-        setSelectedChatId,
-    } = useChatStore();
+    } = useChatStore((state) => state.selectedChatId);
+    const apiNetworkProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com");
 
     // Extract transaction details
     useEffect(() => {
@@ -106,9 +115,6 @@ const BotMessage = ({ message }) => {
     }
 
     const deployContract = async () => {
-        const proxyNetworkProvider = new ProxyNetworkProvider("https://devnet-gateway.multiversx.com");
-        const apiNetworkProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com");
-
         try {
             const deployerAddress = await walletProvider.login();
             const deployerOnNetwork = await apiNetworkProvider.getAccount(Address.fromBech32(deployerAddress));
@@ -170,8 +176,39 @@ const BotMessage = ({ message }) => {
         }
     };
 
-    const handleTransactionClick = () => {
+    const handleTransactionClick = async () => {
         console.log(`Sending ${transactionDetails.amount} eGold to ${transactionDetails.address}`);
+        try {
+            const deployerAddress = await walletProvider.login();
+            const deployerOnNetwork = await apiNetworkProvider.getAccount(Address.fromBech32(deployerAddress));
+            
+            let tx = new Transaction({
+                gasLimit: 70000,
+                sender: Address.fromBech32(deployerAddress),
+                receiver: Address.fromBech32(transactionDetails.address),
+                value: TokenTransfer.egldFromAmount(transactionDetails.amount),
+                chainID: "D"
+            });
+
+            tx.setNonce(deployerOnNetwork.nonce);
+
+            tx = await walletProvider.signTransaction(tx)
+
+            let txHash = await apiNetworkProvider.sendTransaction(tx);
+            const explorerLink = `https://devnet-explorer.multiversx.com/transactions/${txHash}`
+            const { error } = await supabase.from('messages').insert([
+                {
+                    text: `Your contract has been executed successfully! Check it out [here](${explorerLink})`,
+                    conversation_id: selectedChatId,
+                    is_bot: true
+                }
+            ]);
+            if (error) {
+                throw error;
+            }
+        } catch(error) {
+            console.error(error)
+        }
     };
 
     return (
@@ -185,9 +222,9 @@ const BotMessage = ({ message }) => {
                         <React.Fragment key={index}>{segment}</React.Fragment>
                     ))}
                     {transactionDetails && (
-                        <Button onClick={handleTransactionClick} />
+                        <Button onClick={handleTransactionClick} label="Execute Transaction" />
                     )}
-                    {wasmLink && (<Button onClick={deployContract} label="Deploy Transaction" />)}
+                    {wasmLink && (<Button onClick={deployContract} label="Deploy Contract" />)}
                 </div>
             </div>
             <span className='w-10 h-10 rounded-br-full bg-light-cream absolute bottom-0 left-0 transform translate-y-1/2'></span>
