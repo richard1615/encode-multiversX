@@ -6,6 +6,7 @@ from langchain.agents import AgentType
 import os
 from langchain.chat_models import ChatOpenAI
 from tools.custom_multix_tools import GetAccountBalanceTool, SendTransactionTool
+from langchain.agents.agent_toolkits.conversational_retrieval.tool import create_retriever_tool
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from flask_cors import CORS
@@ -20,6 +21,7 @@ from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
+from langchain.vectorstores import DeepLake
 from typing import Type
 import re
 import subprocess
@@ -27,8 +29,8 @@ import boto3
 import time
 
 load_dotenv()
-s3 = boto3.client('s3')
-bucket_name = 'mxai-contract'
+s3 = boto3.client("s3")
+bucket_name = "mxai-contract"
 
 app = Flask(__name__)
 CORS(app)
@@ -75,19 +77,36 @@ print(f"Split {len(texts)} documents")
 print("(3/4) Creating Vector Store...")
 db = Chroma.from_documents(texts, OpenAIEmbeddings(disallowed_special=()))
 
-retriever = db.as_retriever(
+retriever_code = db.as_retriever(
     search_type="mmr",  # Also test "similarity"
     search_kwargs={"k": 8},
 )
 
-print("(4/4) Creating Q and A Retreival Agent...")
+print("(4/4) Creating Q and A Retreival Agent for Code...")
 llm_gen = ChatOpenAI(model_name="gpt-4")
 memory = ConversationSummaryMemory(
     llm=llm_gen, memory_key="chat_history", return_messages=True
 )
-qa = ConversationalRetrievalChain.from_llm(llm_gen, retriever=retriever, memory=memory)
+qa = ConversationalRetrievalChain.from_llm(
+    llm_gen, retriever=retriever_code, memory=memory
+)
 
-print("Done!")
+print("Done (1/2)!")
+
+print("(1/1) Creating Retrival Tool for Q and A")
+embeddings = OpenAIEmbeddings()
+db = DeepLake(
+    dataset_path="./qanda_mx2/", embedding_function=embeddings, read_only=True
+)
+retriever_docs = db.as_retriever()
+
+retriever_tool = create_retriever_tool(
+    retriever_docs,
+    "search_multiversx_docs",
+    "Searches and returns information regarding the multiversx blockchain ecosystem.",
+)
+
+print("Done (2/2)!")
 
 
 def code_geneartion(text):
@@ -112,8 +131,8 @@ class CodeGenerationTool(BaseTool):
     def _run(self, text: str):
         global chat_id
         print("Generating code...")
-        code = code_geneartion("Generate multiversx contract code: "+text)
-            # store in supabase
+        code = code_geneartion("Generate multiversx contract code: " + text)
+        # store in supabase
         try:
             result = (
                 supabase.table("messages")
@@ -129,30 +148,35 @@ class CodeGenerationTool(BaseTool):
         except Exception as e:
             print(e, "chat id must be valid")
             return "Couldn't deploy but here is code: " + code
-        
-        rust_code = re.search(r"```rust\n(.*?)```", code, re.DOTALL).group(1)
-        
+
+        match = re.search(r"```rust\n(.*?)```", code, re.DOTALL)
+
         # check if rust_code is not empty
-        if not rust_code:
-            return "No rust code generated"
-        
+        if not match:
+            return "Error Generating Rust Code"
+
+        rust_code = match.group(1)
         print("Storing Code...")
-        
+
         # Replace the entire line that starts with "pub trait" with "pub trait BasicCode {"
-        rust_code = re.sub(r"^pub trait.*$", "pub trait BasicCode {", rust_code, flags=re.MULTILINE)
-        
+        rust_code = re.sub(
+            r"^pub trait.*$", "pub trait BasicCode {", rust_code, flags=re.MULTILINE
+        )
+
         ## safe the code in a file
         with open("../../../ml/code/basic_code/src/basic_code.rs", "w") as f:
             f.write(rust_code)
 
         print("Building Code...")
-        run_command("cd ../../../ml/code/basic_code && sc-meta all build")
-
+        if run_command("cd ../../../ml/code/basic_code && sc-meta all build") == False:
+            return "Code could not be compiled"
 
         print("Uploading Code...")
         # upload to s3 with timestamp
-        s3_key = f'basic_code_{time.time()}.wasm'
-        s3.upload_file(f'../../../ml/code/basic_code/output/basic_code.wasm', bucket_name, s3_key)
+        s3_key = f"basic_code_{time.time()}.wasm"
+        s3.upload_file(
+            f"../../../ml/code/basic_code/output/basic_code.wasm", bucket_name, s3_key
+        )
         url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
 
         return url
@@ -163,17 +187,34 @@ class CodeGenerationTool(BaseTool):
 
 # Code Generation End
 
+
 def run_command(command):
-    process = subprocess.Popen(command,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,
-                               shell=True)
+    global chat_id
+    process = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+    )
     output, error = process.communicate()
 
     if process.returncode != 0:
         print(f"Error occurred: {error.decode().strip()}")
+        try:
+            result = (
+                supabase.table("messages")
+                .insert(
+                    {
+                        "text": f"Error occurred: #errorstart#{error.decode().strip()}#errorend#",
+                        "is_bot": True,
+                        "conversation_id": chat_id,
+                    }
+                )
+                .execute()
+            )
+        except Exception as e:
+            print(e, "chat id must be valid")
+        return False
     else:
         print(f"Output: {output.decode().strip()}")
+        return True
 
 
 @app.route("/")
@@ -219,7 +260,12 @@ def generate_output():
 
     os.environ["OPENAI_API_KEY"] = data["openAIKey"]
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-    tools = [GetAccountBalanceTool(), SendTransactionTool(), CodeGenerationTool()]
+    tools = [
+        GetAccountBalanceTool(),
+        SendTransactionTool(),
+        CodeGenerationTool(),
+        retriever_tool,
+    ]
     agent = initialize_agent(
         tools,
         llm,
