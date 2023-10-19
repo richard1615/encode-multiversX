@@ -37,7 +37,7 @@ export default function SignUp() {
       <div className="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr from-mindful-gray-40 to-leaf-green justify-around items-center hidden">
         <div>
           <h1 className="text-white font-bold text-4xl font-sans">MxAI</h1>
-          <p className="text-white mt-1">We're awesome awesome awesome</p>
+          <p className="text-white mt-1">Making web3 simple: seamless blockchain interactions for everyone</p>
         </div>
         <div class="absolute -bottom-32 -left-40 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
         <div class="absolute -bottom-40 -left-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
