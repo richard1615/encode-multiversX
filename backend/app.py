@@ -39,7 +39,7 @@ url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 chat_id: int = 0
-repo_path = "../../../ml/github-scrapper/code_scrapped"
+repo_path = "../ml/github-scrapper/code_scrapped"
 
 system_message = SystemMessage(
     content="""You are a specialized AI, designed to act as an chatbot that help facilitate blockchain transaction
@@ -164,18 +164,18 @@ class CodeGenerationTool(BaseTool):
         )
 
         ## safe the code in a file
-        with open("../../../ml/code/basic_code/src/basic_code.rs", "w") as f:
+        with open("../ml/code/basic_code/src/basic_code.rs", "w") as f:
             f.write(rust_code)
 
         print("Building Code...")
-        if run_command("cd ../../../ml/code/basic_code && sc-meta all build") == False:
+        if run_command("cd ../ml/code/basic_code && sc-meta all build") == False:
             return "Code could not be compiled"
 
         print("Uploading Code...")
         # upload to s3 with timestamp
         s3_key = f"basic_code_{time.time()}.wasm"
         s3.upload_file(
-            f"../../../ml/code/basic_code/output/basic_code.wasm", bucket_name, s3_key
+            f"../ml/code/basic_code/output/basic_code.wasm", bucket_name, s3_key
         )
         url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
 
