@@ -9,20 +9,23 @@ from dotenv import load_dotenv
 provider = ProxyNetworkProvider("https://devnet-gateway.multiversx.com")
 
 load_dotenv()
-mnemonic = ''
-openai = ''
+mnemonic = ""
+openai = ""
 api_key = os.getenv("API_KEY")
+
 
 def get_account_balance(account_address):
     acc = Address.from_bech32(account_address)
     account_on_network = provider.get_account(acc)
     return account_on_network.balance
 
+
 class GetAccountBalanceInput(BaseModel):
     """Inputs for get_account_balance"""
-    
+
     account_address: str = Field(
-        description="the address of the account to get the balance of")
+        description="the address of the account to get the balance of"
+    )
 
 
 class GetAccountBalanceTool(BaseTool):
@@ -39,18 +42,21 @@ class GetAccountBalanceTool(BaseTool):
         return account_balance
 
     def _arun(self, account_address: str):
-        raise NotImplementedError(
-            "get_account_balance does not support async")
+        raise NotImplementedError("get_account_balance does not support async")
+
 
 # Send Transaction
 
+
 class SendTransactionInput(BaseModel):
     """Inputs for send_transaction"""
+
     receiver_address: str = Field(
-        description="the address of the account to send the transaction to")
-    value: int = Field(
-        description="the amount of eGold to send")
-    
+        description="the address of the account to send the transaction to"
+    )
+    value: int = Field(description="the amount of eGold to send")
+
+
 class SendTransactionTool(BaseTool):
     name = "send_transaction"
     description = """
@@ -67,10 +73,10 @@ class SendTransactionTool(BaseTool):
     def _run(self, receiver_address: str, value: int):
         if len(receiver_address) != 62:
             return "Invalid receiver address"
-        
+
         # sendstr = f"$start${receiver_address}|{value}$end$"
         # return sendstr
         return (receiver_address, value)
+
     def _arun(self, receiver_address: str, value: int):
-        raise NotImplementedError(
-            "send_transaction does not support async")
+        raise NotImplementedError("send_transaction does not support async")
