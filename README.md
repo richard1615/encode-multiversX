@@ -85,7 +85,13 @@
 
 ![Product Name Screen Shot](./frontend/public/screenshot.png)
 
-Need to write about project here
+MxAI is a user-friendly chatbot designed to simplify and democratize blockchain technology. It reduces the steep learning curve for newcomers by providing an AI-driven interface that requires minimal technical expertise, while also streamlining repetitive and time-consuming processes for technical users. Our chatbot aims to make web3 accessible to everyone, contributing to the widespread adoption of blockchain technology.
+
+Current features include:
+* Generate, compile, and deploy code for blockchain applications
+* Interact with ERC20 contracts
+* Perform operations such as sending tokens and viewing balances of accounts
+* Lookup Multiversx Documentation for guidance and information
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -105,9 +111,19 @@ Need to write about project here
 * [![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
 * [![Langchain](./frontend/public/langchain.png)](https://www.langchain.com/)
 * [![Deeplake](./frontend/public/deeplake.png)](https://www.deeplake.ai/)
-* MultiversX
+* [![MultiversX](./frontend/public/multiversx-logo.svg)](https://multiversx.com/)
 
-
+We have used the following MultiversX sdks to build the project:
+* [sdk-js](https://docs.multiversx.com/sdk-and-tools/sdk-js)
+  * The wallet extension provider enables users to authenticate their MultiversX DeFi Wallet and authorize transactions.
+  * Network providers to interact with the network and broadcast the transactions.
+  * Utilized Code, SmartContract, and CodeMetadata classes to deploy smart contracts from hosted .wasm files.
+  * ABI Registry to interact with smart contracts from hosted abi files.
+* [sdk-py](https://docs.multiversx.com/sdk-and-tools/sdk-py/)
+  * Query details about accounts such as balance, nonce etc.
+* [mx-sdk-rs](https://github.com/multiversx/mx-sdk-rs)
+  * Use the library to compile the generated contracts
+* [Multiversx Defi Wallet Extension](https://chrome.google.com/webstore/detail/multiversx-defi-wallet/dngmlblcodfobpdpecaadgfbcggfjfnm)
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
