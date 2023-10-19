@@ -6,7 +6,9 @@ from langchain.agents import AgentType
 import os
 from langchain.chat_models import ChatOpenAI
 from tools.custom_multix_tools import GetAccountBalanceTool, SendTransactionTool
-from langchain.agents.agent_toolkits.conversational_retrieval.tool import create_retriever_tool
+from langchain.agents.agent_toolkits.conversational_retrieval.tool import (
+    create_retriever_tool,
+)
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from flask_cors import CORS
