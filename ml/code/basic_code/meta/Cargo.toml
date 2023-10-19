@@ -1,0 +1,10 @@
+[package]
+name = "basic_code-meta"
+version = "0.0.0"
+edition = "2021"
+publish = false
+[dependencies.basic_code]
+path = ".."
+
+[dependencies.multiversx-sc-meta]
+version = "0.43.4"

@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 import Highlight from 'react-highlight';
 import axios from 'axios';
@@ -32,9 +34,7 @@ const BotMessage = ({ message }) => {
   const [erc20Address, setErc20Address] = useState('');
   const supabase = createClientComponentClient();
   const [wasmLink, setWasmLink] = useState('');
-  const {
-    selectedChatId,
-  } = useChatStore((state) => state.selectedChatId);
+  const selectedChatId = useChatStore(state => state.selectedChatId);
   const apiNetworkProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com");
 
   // Extracts the transaction details from the given message.
