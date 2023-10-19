@@ -23,7 +23,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -144,32 +143,131 @@ This is an example of how to list things you need to use the software and how to
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+#### Frontend
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+1. Set up Supabase:
+
+    1.1. Visit [Supabase](https://supabase.com/) and sign up for an account if you don’t already have one.
+
+    1.2. After signing up and logging in, create a new project.
+
+    1.3. Once your project is created, navigate to the 'API' section. Here, you will find your API keys: `supabaseUrl` and `anonKey`.
+
+    1.4. Note down these keys. You'll be needing them in subsequent steps.
+
+2. Clone the Repository:
+
+    Open your terminal or command prompt and execute the following commands:
+
+    ```sh
+    git clone https://github.com/CommanderAstern/encode-multiversX.git
+    ```
+
+    This will clone the repository into a directory named "encode-multiversX".
+
+3. Install Necessary NPM Packages:
+
+    Before installing the packages, ensure you have [Node.js](https://nodejs.org/) and [NPM](https://www.npmjs.com/) installed on your machine.
+
+    Now, navigate to the frontend directory:
+
+    ```sh
+    cd encode-multiversX/frontend
+    ```
+
+    Install the required packages:
+
+    ```sh
+    npm install
+    ```
+
+4. Configure Environment Variables:
+
+    4.1. In the `frontend` directory, create an `.env.local` file.
+
+    4.2. Open `.env.local` in a text editor.
+
+    4.3. Add the following environment variables with the values that you obtained from the Supabase dashboard:
+
+    ```sh
+    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+    ```
+
+    Replace `your_supabase_url` and `your_anon_key` with the appropriate values.
+
+    4.4. Specify Your Backend's URL:
+
+    Specify the URL where your backend is currently running.
+
+    Open the `.env.local` file and add the following:
+
+    ```sh
+    NEXT_PUBLIC_BASE_URL=http://localhost:5000
+    ```
+
+    In the above example, the backend is assumed to be running locally on port `5000`. Replace `http://localhost:5000` with the actual URL where your backend is running.
+
+    4.5. Save and close the `.env.local` file.
+
+5. Run the Application:
+
+    If you're ready to see your project in action, you can start the development server:
+
+    ```sh
+    npm run dev
+    ```
+
+    Visit `http://localhost:3000` in your browser to see the application running.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+#### Step 1: Create an Account
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+1. Open your web browser and navigate to: 
+```
+http://mxai.live/signup
+```
+
+2. Follow the on-screen instructions to create an account.
+
+#### Step 2: Configure OpenAI API Key
+
+1. After logging in, look for a user icon or profile picture on the top right corner of the web page.
+
+2. Click on it. A modal (popup window) will appear.
+
+3. Within this modal, you'll find an input field to add your OpenAI API key. Paste your OpenAI API key into the designated field.
+
+4. Save to ensure your key is stored.
+
+#### Step 3: Set Up MultiversX Wallet Extension
+
+Before proceeding, ensure you have the MultiversX Wallet browser extension:
+
+1. If you haven't installed the MultiversX Wallet extension, download and install it from the respective browser's extension store.
+
+2. Once installed, click on the MultiversX Wallet icon in your browser's toolbar.
+
+3. Log in or set up your wallet account.
+
+#### Step 4: Start Typing!
+
+With everything set up, you're ready to interact with the application. Start typing in the designated area, and watch as the magic happens!
+
+---
+
+#### Sample Prompts:
+
+- I would like to send a transaction of 1000 to erd1877ppafpazuwgjcnr02rdhnn8ux53xlwvvr0aexww3fdlt07ch4sufuv5c
+- What is the balance of erd1877ppafpazuwgjcnr02rdhnn8ux53xlwvvr0aexww3fdlt07ch4sufuv5c
+- Can you generate a contract that let's you add two numbers and also holds the number 8 which you can increment it?
+- Can you tell me about the extension wallet provider in multiversX?
+- I'd like to interact with an ERC20 contract at address erd1qqqqqqqqqqqqqpgqdjfrylk03uvwlqc2t3l8ymwelev3zmw3wdtqqy0fzc
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
