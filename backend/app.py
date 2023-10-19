@@ -1,46 +1,25 @@
-from flask import Flask, jsonify, request
-import json
-from langchain.agents import initialize_agent
-from langchain.chat_models import ChatOpenAI
-from langchain.agents import AgentType
-import os
-from langchain.chat_models import ChatOpenAI
-from tools.custom_multix_tools import GetAccountBalanceTool, SendTransactionTool
-from langchain.agents.agent_toolkits.conversational_retrieval.tool import create_retriever_tool
-from dotenv import load_dotenv
-from supabase import create_client, Client
-from flask_cors import CORS
-from langchain.schema import SystemMessage
-from langchain.text_splitter import Language
-from langchain.document_loaders.generic import GenericLoader
-from langchain.document_loaders.parsers import LanguageParser
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.memory import ConversationSummaryMemory
-from langchain.chains import ConversationalRetrievalChain
-from langchain.vectorstores import Chroma
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
-from langchain.vectorstores import DeepLake
-from typing import Type
-import re
-import subprocess
-import boto3
-import time
+from imports import *
 
+# Loading .env file
 load_dotenv()
+
+# Amazon S3 Setup
 s3 = boto3.client("s3")
 bucket_name = "mxai-contract"
 
 app = Flask(__name__)
 CORS(app)
 
+# Supabase Setup
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
+
+# Global Variables
 chat_id: int = 0
 repo_path = "../ml/github-scrapper/code_scrapped"
 
+# ChatGPT System Pormpt
 system_message = SystemMessage(
     content="""You are a specialized AI, designed to act as an chatbot that help facilitate blockchain transaction
 
@@ -54,8 +33,9 @@ agent_kwargs = {
     "system_message": system_message,
 }
 
+## Code Generation Setup Process
 
-## Code Generation Start
+## Loading Code from local repo
 print("(1/4) Loading Code...")
 loader = GenericLoader.from_filesystem(
     repo_path,
@@ -93,6 +73,8 @@ qa = ConversationalRetrievalChain.from_llm(
 
 print("Done (1/2)!")
 
+
+# Document Retreival Setup Process
 print("(1/1) Creating Retrival Tool for Q and A")
 embeddings = OpenAIEmbeddings()
 db = DeepLake(
@@ -185,11 +167,9 @@ class CodeGenerationTool(BaseTool):
         raise NotImplementedError("code_geneartion does not support async")
 
 
-# Code Generation End
-
-
 def run_command(command):
     global chat_id
+    # Using subprocess.run() method to run the shell command
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     )
@@ -198,6 +178,7 @@ def run_command(command):
     if process.returncode != 0:
         print(f"Error occurred: {error.decode().strip()}")
         try:
+            # store in supabase with relavent flags for frontend
             result = (
                 supabase.table("messages")
                 .insert(
@@ -250,16 +231,10 @@ def generate_output():
         print("chat_id must be a number")
         return jsonify(message="chat_id must be a number")
 
-    # conversation_exists = supabase.table('conversations') \
-    #     .select('id') \
-    #     .eq('id', data['chat_id']) \
-    #     .execute()
-    # if not conversation_exists:
-    #     print("Wrong conversation ID")
-    #     return jsonify(message="Wrong conversation ID")
-
     os.environ["OPENAI_API_KEY"] = data["openAIKey"]
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+
+    # Initialize Agent
     tools = [
         GetAccountBalanceTool(),
         SendTransactionTool(),
@@ -276,7 +251,7 @@ def generate_output():
 
     output = agent.run(data["text"])
 
-    # store in supabase
+    # Store the output in supabase
     try:
         result = (
             supabase.table("messages")
